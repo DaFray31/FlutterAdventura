@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:terraaventura/functions/supabase_client.dart'; // Ajoutez cette ligne
 
 class AdventuresScreen extends StatelessWidget {
   const AdventuresScreen({Key? key}) : super(key: key);
-  static final SupabaseClient supabase = SupabaseClient(
-    'https://kdiowwslccpwbzhccjaj.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtkaW93d3NsY2Nwd2J6aGNjamFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDMyMzQ2MTMsImV4cCI6MjAxODgxMDYxM30.lHDaL3MYtfNsH5Oop32FfRlkSOhfGoDd34vl0b-4PWA',
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +65,7 @@ class AdventuresScreen extends StatelessWidget {
                   ],
                 ),
                 StreamBuilder(
-                  stream: supabase.from('monuments').stream(primaryKey: ['id']),
+                  stream: SupabaseService.supabase.from('monuments').stream(primaryKey: ['id']), // Modifiez cette ligne
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
@@ -117,7 +114,7 @@ class AdventuresScreen extends StatelessWidget {
 
           Expanded(
             child: StreamBuilder(
-              stream: supabase.from('monuments').stream(primaryKey: ['id']),
+              stream: SupabaseService.supabase.from('monuments').stream(primaryKey: ['id']), // Modifiez cette ligne
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
