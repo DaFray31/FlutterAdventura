@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 import 'package:terraaventura/screens/place_page.dart';
 
@@ -46,7 +45,7 @@ class BeforeAdventureScreenState extends State<BeforeAdventureScreen> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -65,7 +64,7 @@ class BeforeAdventureScreenState extends State<BeforeAdventureScreen> {
                       color: Colors.grey,
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   const Text(
                     'Description',
                     style: TextStyle(

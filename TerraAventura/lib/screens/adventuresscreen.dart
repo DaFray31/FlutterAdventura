@@ -16,8 +16,8 @@ class AdventuresScreen extends StatelessWidget {
       body: Column(
         children: [
           // Barre de recherche
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+          const Padding(
+            padding: EdgeInsets.all(8.0),
             child: TextField(
               decoration: InputDecoration(
                 labelText: 'Rechercher',
@@ -25,9 +25,9 @@ class AdventuresScreen extends StatelessWidget {
             ),
           ),
           // Titre centré
-          Center(
+          const Center(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(16.0),
               child: Text(
                 'Limoges',
                 style: TextStyle(
@@ -38,7 +38,7 @@ class AdventuresScreen extends StatelessWidget {
             ),
           ),
           // Sous-titre centré
-          Center(
+          const Center(
             child: Text(
               'Monuments',
               style: TextStyle(
@@ -51,7 +51,7 @@ class AdventuresScreen extends StatelessWidget {
           Expanded(
             //map
             child: FlutterMap(
-              options: MapOptions(
+              options: const MapOptions(
                 initialCenter: LatLng(45.82975453040051, 1.266962885714927),
                 initialZoom: 10,
               ),
@@ -60,7 +60,7 @@ class AdventuresScreen extends StatelessWidget {
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'flutter_map',
                 ),
-                RichAttributionWidget(
+                const RichAttributionWidget(
                   attributions: [
                     TextSourceAttribution(
                       'OpenStreetMap contributors',
@@ -75,13 +75,13 @@ class AdventuresScreen extends StatelessWidget {
                     }
 
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
+                      return const Center(
                         child: CircularProgressIndicator(),
                       );
                     }
 
                     if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
-                      return Text('No data available');
+                      return const Text('No data available');
                     }
 
                     final data = snapshot.data as List;
@@ -103,7 +103,7 @@ class AdventuresScreen extends StatelessWidget {
                           point: LatLng(latitude, longitude),
                           width: 80,
                           height: 80,
-                          child: FlutterLogo(),
+                          child: const FlutterLogo(),
                         ),
                       );
                     }
@@ -124,13 +124,13 @@ class AdventuresScreen extends StatelessWidget {
                 }
 
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(),
                   );
                 }
 
                 if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
-                  return Text('No data available');
+                  return const Text('No data available');
                 }
 
                 final data = snapshot.data as List;
@@ -143,9 +143,9 @@ class AdventuresScreen extends StatelessWidget {
                       subtitle: Row(
                         children: [
                           Text(monument['duree'].toString()),
-                          Text(' - '),
+                          const Text(' - '),
                           Text(monument['distance'].toString()),
-                          Text('km'),
+                          const Text('km'),
                         ],
                       ),
                     );

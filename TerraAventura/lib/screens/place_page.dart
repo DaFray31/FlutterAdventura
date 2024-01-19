@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -51,14 +50,14 @@ class TrainingPageState extends State<TrainingPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Félicitations !'),
+            title: const Text('Félicitations !'),
             content: Text('Vous avez validé l\'étape $stepNumber et gagné 100 points !'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           );
@@ -69,14 +68,14 @@ class TrainingPageState extends State<TrainingPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Code incorrect'),
-            content: Text('Le code secret que vous avez saisi est incorrect. Veuillez réessayer.'),
+            title: const Text('Code incorrect'),
+            content: const Text('Le code secret que vous avez saisi est incorrect. Veuillez réessayer.'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           );
@@ -89,10 +88,10 @@ class TrainingPageState extends State<TrainingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Lieu m - Etape n'),
+        title: const Text('Lieu m - Etape n'),
         actions: [
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
             onPressed: () {
               // Implement log-out logic here
             },
@@ -106,7 +105,7 @@ class TrainingPageState extends State<TrainingPage> {
           children: [
             Container(
               height: MediaQuery.of(context).size.height * 0.3,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('images/back1.jpg'),
                   fit: BoxFit.cover,
@@ -157,7 +156,7 @@ class TrainingPageState extends State<TrainingPage> {
                   // ... (votre code existant)
 
                   const SizedBox(height: 16.0),
-                  Text(
+                  const Text(
                     'Étape de la Chasse',
                     style: TextStyle(
                       fontSize: 20.0,
@@ -174,13 +173,13 @@ class TrainingPageState extends State<TrainingPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         'Points:',
                         style: TextStyle(color: Colors.white),
                       ),
                       Text(
                         '$points',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -200,14 +199,14 @@ class TrainingPageState extends State<TrainingPage> {
                   Align(
                     alignment: Alignment.topRight,
                     child: IconButton(
-                      icon: Icon(Icons.share),
+                      icon: const Icon(Icons.share),
                       onPressed: () {
                         // Code share
                       },
                     ),
                   ),
                   const SizedBox(height: 16.0),
-                  Text(
+                  const Text(
                     'Commentaires',
                     style: TextStyle(
                       fontSize: 20.0,
@@ -228,7 +227,7 @@ class TrainingPageState extends State<TrainingPage> {
                       ),
                       child: Text(
                         comments[currentCommentIndex],
-                        style: TextStyle(fontSize: 16.0),
+                        style: const TextStyle(fontSize: 16.0),
                       ),
                     ),
                   ),
@@ -250,7 +249,7 @@ class TrainingPageState extends State<TrainingPage> {
                         onPressed: () {
                           // Implémentez le code à exécuter lorsqu'on appuie sur le bouton d'envoi
                         },
-                        icon: Icon(Icons.send),
+                        icon: const Icon(Icons.send),
                         color: Colors.indigo, // Couleur de l'icône du bouton d'envoi
                       ),
                     ],
@@ -277,10 +276,10 @@ class TrainingPageState extends State<TrainingPage> {
                   icon,
                   color: iconColor,
                 ),
-                SizedBox(width: 8.0),
+                const SizedBox(width: 8.0),
                 Text(
                   label,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -289,7 +288,7 @@ class TrainingPageState extends State<TrainingPage> {
               ],
             ),
             IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.check,
                 color: Colors.white,
               ),
@@ -302,7 +301,7 @@ class TrainingPageState extends State<TrainingPage> {
         const SizedBox(height: 8.0),
         Text(
           'Objectif: $objective',
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
         const SizedBox(height: 16.0),
       ],
@@ -318,12 +317,12 @@ class TrainingPageState extends State<TrainingPage> {
           title: Text('Vérification de l\'étape $stepNumber'),
           content: Column(
             children: [
-              Text('Entrez le code secret trouvé sur l\'élément :'),
+              const Text('Entrez le code secret trouvé sur l\'élément :'),
               TextField(
                 onChanged: (value) {
                   secretCode = value;
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Code Secret',
                 ),
@@ -335,14 +334,14 @@ class TrainingPageState extends State<TrainingPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Annuler'),
+              child: const Text('Annuler'),
             ),
             TextButton(
               onPressed: () {
                 checkStep(stepNumber, secretCode);
                 Navigator.of(context).pop();
               },
-              child: Text('Valider'),
+              child: const Text('Valider'),
             ),
           ],
         );
