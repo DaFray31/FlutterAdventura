@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -155,7 +154,7 @@ class TrainingPageState extends State<ProfileScreen> {
               onPressed: () {
                 // Action à effectuer lors du clic sur le bouton
               },
-              child: Text('Modifier le profil'),
+              child: const Text('Modifier le profil'),
             ),
           ],
         ),
