@@ -2,15 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:terraaventura/functions/supabase_client.dart'; // Ajoutez cette ligne
 
 import 'beforeAdventure.dart';
 
 class AdventuresScreen extends StatelessWidget {
   const AdventuresScreen({Key? key}) : super(key: key);
-  static final SupabaseClient supabase = SupabaseClient(
-    'https://kdiowwslccpwbzhccjaj.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtkaW93d3NsY2Nwd2J6aGNjamFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDMyMzQ2MTMsImV4cCI6MjAxODgxMDYxM30.lHDaL3MYtfNsH5Oop32FfRlkSOhfGoDd34vl0b-4PWA',
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +15,8 @@ class AdventuresScreen extends StatelessWidget {
       body: Column(
         children: [
           // Barre de recherche
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+          const Padding(
+            padding: EdgeInsets.all(8.0),
             child: TextField(
               decoration: InputDecoration(
                 labelText: 'Rechercher',
@@ -27,9 +24,9 @@ class AdventuresScreen extends StatelessWidget {
             ),
           ),
           // Titre centré
-          Center(
+          const Center(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(16.0),
               child: Text(
                 'Limoges',
                 style: TextStyle(
@@ -40,7 +37,7 @@ class AdventuresScreen extends StatelessWidget {
             ),
           ),
           // Sous-titre centré
-          Center(
+          const Center(
             child: Text(
               'Monuments',
               style: TextStyle(
@@ -53,7 +50,7 @@ class AdventuresScreen extends StatelessWidget {
           Expanded(
             //map
             child: FlutterMap(
-              options: MapOptions(
+              options: const MapOptions(
                 initialCenter: LatLng(45.82975453040051, 1.266962885714927),
                 initialZoom: 10,
               ),
@@ -70,7 +67,7 @@ class AdventuresScreen extends StatelessWidget {
                   ],
                 ),
                 StreamBuilder(
-                  stream: supabase.from('monuments').stream(primaryKey: ['id']),
+                  stream: SupabaseService.supabase.from('monuments').stream(primaryKey: ['id']), // Modifiez cette ligne
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
@@ -83,7 +80,7 @@ class AdventuresScreen extends StatelessWidget {
                     }
 
                     if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
-                      return Text('No data available');
+                      return const Text('No data available');
                     }
 
                     final data = snapshot.data as List;
@@ -135,7 +132,7 @@ class AdventuresScreen extends StatelessWidget {
 
           Expanded(
             child: StreamBuilder(
-              stream: supabase.from('monuments').stream(primaryKey: ['id']),
+              stream: SupabaseService.supabase.from('monuments').stream(primaryKey: ['id']), // Modifiez cette ligne
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
@@ -162,9 +159,9 @@ class AdventuresScreen extends StatelessWidget {
                       subtitle: Row(
                         children: [
                           Text(monument['duree'].toString()),
-                          Text(' - '),
+                          const Text(' - '),
                           Text(monument['distance'].toString()),
-                          Text('km'),
+                          const Text('km'),
                         ],
                       ),
                     );

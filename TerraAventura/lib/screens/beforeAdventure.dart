@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 import 'package:terraaventura/screens/place_page.dart';
 
@@ -52,7 +51,7 @@ class BeforeAdventureScreen extends StatelessWidget {
                       color: Colors.grey,
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   const Text(
                     'Description',
                     style: TextStyle(
