@@ -20,7 +20,7 @@ class AdventuresScreen extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               decoration: InputDecoration(
-                labelText: 'Rechercher...',
+                labelText: 'Rechercher',
               ),
             ),
           ),
