@@ -3,6 +3,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'beforeAdventure.dart';
+
 class AdventuresScreen extends StatelessWidget {
   const AdventuresScreen({Key? key}) : super(key: key);
   static final SupabaseClient supabase = SupabaseClient(
@@ -60,7 +62,7 @@ class AdventuresScreen extends StatelessWidget {
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'flutter_map',
                 ),
-                RichAttributionWidget(
+                const RichAttributionWidget(
                   attributions: [
                     TextSourceAttribution(
                       'OpenStreetMap contributors',
@@ -75,7 +77,7 @@ class AdventuresScreen extends StatelessWidget {
                     }
 
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
+                      return const Center(
                         child: CircularProgressIndicator(),
                       );
                     }
@@ -99,17 +101,33 @@ class AdventuresScreen extends StatelessWidget {
                       double longitude = double.parse(pointValues[0]);
 
                       markers.add(
-                        Marker(
-                          point: LatLng(latitude, longitude),
-                          width: 80,
-                          height: 80,
-                          child: FlutterLogo(),
-                        ),
-                      );
-                    }
+                          Marker(
+                            point: LatLng(latitude, longitude),
+                            width: 80,
+                            height: 80,
+                            child: Column(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.place,
+                                      // Remplacez par Icons.place pour un "map pointer"
+                                      color: Colors.black,
+                                    ),
+                                    onPressed: () {
+                                      // Naviguer vers la page TrainingPage
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => BeforeAdventureScreen(monumentData: monumentData)),
+                                      );
+                                    },
+                                  ),
+                                ],
+                            ),
+                          ));
+                      }
 
-                    return MarkerLayer(markers: markers);
-                  },
+                          return MarkerLayer(markers: markers);
+                    },
                 ),
               ],
             ),
@@ -124,13 +142,13 @@ class AdventuresScreen extends StatelessWidget {
                 }
 
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(),
                   );
                 }
 
                 if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
-                  return Text('No data available');
+                  return const Text('No data available');
                 }
 
                 final data = snapshot.data as List;
@@ -138,6 +156,7 @@ class AdventuresScreen extends StatelessWidget {
                   itemCount: data.length,
                   itemBuilder: (context, index) {
                     final monument = data[index];
+                    print(data);
                     return ListTile(
                       title: Text(monument['nom'].toString()),
                       subtitle: Row(

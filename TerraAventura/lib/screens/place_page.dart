@@ -1,28 +1,22 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:latlong2/latlong.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class PlacePage extends StatefulWidget {
+  final dynamic monumentData;
 
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Training App',
-      home: TrainingPage(),
-    );
-  }
-}
-
-class TrainingPage extends StatefulWidget {
-  const TrainingPage({Key? key}) : super(key: key);
+  const PlacePage({Key? key, required this.monumentData}) : super(key: key);
 
   @override
-  TrainingPageState createState() => TrainingPageState();
+  PlacePageState createState() => PlacePageState(monumentData);
 }
 
-class TrainingPageState extends State<TrainingPage> {
-
-
+class PlacePageState extends State<PlacePage> {
+  static final SupabaseClient supabase = SupabaseClient(
+    'https://kdiowwslccpwbzhccjaj.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtkaW93d3NsY2Nwd2J6aGNjamFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDMyMzQ2MTMsImV4cCI6MjAxODgxMDYxM30.lHDaL3MYtfNsH5Oop32FfRlkSOhfGoDd34vl0b-4PWA',
+  );
   bool isFavoritePressed = false;
   bool isFlagPressed = false;
   bool switchValue = false;
@@ -35,6 +29,14 @@ class TrainingPageState extends State<TrainingPage> {
     'Expérience incroyable !',
   ];
   int currentCommentIndex = 0;
+  TextEditingController commentController = TextEditingController();
+  List<String> carouselComments = [];
+
+  dynamic data;
+
+  PlacePageState(dynamic monumentData) {
+    data = monumentData;
+  }
 
   void nextComment() {
     setState(() {
@@ -43,45 +45,17 @@ class TrainingPageState extends State<TrainingPage> {
   }
 
   void checkStep(int stepNumber, String secretCode) {
-    if (secretCode == 'codeSecret123') {
+    // Implementation of checkStep
+  }
+
+  void addToCarousel() {
+    String newComment = commentController.text.trim();
+    if (newComment.isNotEmpty) {
       setState(() {
-        points += 100;
+        comments.add(newComment);
+        commentController.clear();
+        //writeToSupabase(1, 3);
       });
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Félicitations !'),
-            content: Text('Vous avez validé l\'étape $stepNumber et gagné 100 points !'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Code incorrect'),
-            content: Text('Le code secret que vous avez saisi est incorrect. Veuillez réessayer.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
     }
   }
 
@@ -89,16 +63,16 @@ class TrainingPageState extends State<TrainingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Lieu m - Etape n'),
+        title: const Text('Lieu m - Etape n'),
         actions: [
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
             onPressed: () {
               // Implement log-out logic here
             },
           ),
         ],
-        backgroundColor: Colors.indigo, // Couleur de la barre d'applications
+        backgroundColor: Colors.indigo,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -106,7 +80,7 @@ class TrainingPageState extends State<TrainingPage> {
           children: [
             Container(
               height: MediaQuery.of(context).size.height * 0.3,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('images/back1.jpg'),
                   fit: BoxFit.cover,
@@ -157,7 +131,7 @@ class TrainingPageState extends State<TrainingPage> {
                   // ... (votre code existant)
 
                   const SizedBox(height: 16.0),
-                  Text(
+                  const Text(
                     'Étape de la Chasse',
                     style: TextStyle(
                       fontSize: 20.0,
@@ -166,21 +140,24 @@ class TrainingPageState extends State<TrainingPage> {
                     ),
                   ),
                   const SizedBox(height: 16.0),
-                  buildChaseStep('Étape 1', 'Trouvez l\'indice caché', 1, Icons.location_on, Colors.teal),
-                  buildChaseStep('Étape 2', 'Résolvez la devinette', 2, Icons.question_answer, Colors.orange),
-                  buildChaseStep('Étape 3', 'Prenez une photo', 3, Icons.camera_alt, Colors.purple),
+                  buildChaseStep('Étape 1', 'Trouvez l\'indice caché', 1,
+                      Icons.location_on, Colors.teal),
+                  buildChaseStep('Étape 2', 'Résolvez la devinette', 2,
+                      Icons.question_answer, Colors.orange),
+                  buildChaseStep('Étape 3', 'Prenez une photo', 3,
+                      Icons.camera_alt, Colors.purple),
 
                   const SizedBox(height: 16.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         'Points:',
                         style: TextStyle(color: Colors.white),
                       ),
                       Text(
                         '$points',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -200,14 +177,14 @@ class TrainingPageState extends State<TrainingPage> {
                   Align(
                     alignment: Alignment.topRight,
                     child: IconButton(
-                      icon: Icon(Icons.share),
+                      icon: const Icon(Icons.share),
                       onPressed: () {
                         // Code share
                       },
                     ),
                   ),
                   const SizedBox(height: 16.0),
-                  Text(
+                  const Text(
                     'Commentaires',
                     style: TextStyle(
                       fontSize: 20.0,
@@ -224,11 +201,11 @@ class TrainingPageState extends State<TrainingPage> {
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey),
                         borderRadius: BorderRadius.circular(10.0),
-                        color: Colors.grey[200], // Couleur de fond de la boîte de commentaires
+                        color: Colors.grey[200],
                       ),
                       child: Text(
                         comments[currentCommentIndex],
-                        style: TextStyle(fontSize: 16.0),
+                        style: const TextStyle(fontSize: 16.0),
                       ),
                     ),
                   ),
@@ -237,6 +214,7 @@ class TrainingPageState extends State<TrainingPage> {
                     children: [
                       Expanded(
                         child: TextField(
+                          controller: commentController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(50.0),
@@ -247,11 +225,9 @@ class TrainingPageState extends State<TrainingPage> {
                       ),
                       const SizedBox(width: 10.0),
                       IconButton(
-                        onPressed: () {
-                          // Implémentez le code à exécuter lorsqu'on appuie sur le bouton d'envoi
-                        },
-                        icon: Icon(Icons.send),
-                        color: Colors.indigo, // Couleur de l'icône du bouton d'envoi
+                        onPressed: addToCarousel,
+                        icon: const Icon(Icons.send),
+                        color: Colors.indigo,
                       ),
                     ],
                   ),
@@ -264,7 +240,8 @@ class TrainingPageState extends State<TrainingPage> {
     );
   }
 
-  Widget buildChaseStep(String label, String objective, int stepNumber, IconData icon, Color iconColor) {
+  Widget buildChaseStep(String label, String objective, int stepNumber,
+      IconData icon, Color iconColor) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -277,10 +254,10 @@ class TrainingPageState extends State<TrainingPage> {
                   icon,
                   color: iconColor,
                 ),
-                SizedBox(width: 8.0),
+                const SizedBox(width: 8.0),
                 Text(
                   label,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -289,7 +266,7 @@ class TrainingPageState extends State<TrainingPage> {
               ],
             ),
             IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.check,
                 color: Colors.white,
               ),
@@ -302,12 +279,31 @@ class TrainingPageState extends State<TrainingPage> {
         const SizedBox(height: 8.0),
         Text(
           'Objectif: $objective',
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
         const SizedBox(height: 16.0),
       ],
     );
   }
+
+  /*void writeToSupabase(idUser, idMonument) async {
+    // Créez un tableau de données que vous souhaitez écrire dans la base de données
+    final List<Map<String, dynamic>> newData = [
+      {'id_monument': idMonument},
+      // Ajoutez d'autres données au besoin
+    ];
+
+    // Utilisez la méthode upsert pour écrire les données dans la table 'monuments'
+    final response =
+        await supabase.from('pers_commentaires').upsert(newData, onConflict: 'nom');
+
+    // Vérifiez la réponse pour voir si l'opération a réussi
+    if (response.error != null) {
+      print('Erreur ${response.error!.message}');
+    } else {
+      print('Données écrites avec succès !');
+    }
+  }*/
 
   void showCodeInputDialog(int stepNumber) {
     String secretCode = '';
@@ -318,12 +314,12 @@ class TrainingPageState extends State<TrainingPage> {
           title: Text('Vérification de l\'étape $stepNumber'),
           content: Column(
             children: [
-              Text('Entrez le code secret trouvé sur l\'élément :'),
+              const Text('Entrez le code secret trouvé sur l\'élément :'),
               TextField(
                 onChanged: (value) {
                   secretCode = value;
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Code Secret',
                 ),
@@ -335,14 +331,14 @@ class TrainingPageState extends State<TrainingPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Annuler'),
+              child: const Text('Annuler'),
             ),
             TextButton(
               onPressed: () {
                 checkStep(stepNumber, secretCode);
                 Navigator.of(context).pop();
               },
-              child: Text('Valider'),
+              child: const Text('Valider'),
             ),
           ],
         );
