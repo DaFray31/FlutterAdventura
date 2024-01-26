@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:terraaventura/screens/place_page.dart';
 
+import 'dialog_screen.dart';
+
 class BeforeAdventureScreen extends StatelessWidget {
   final dynamic monumentData;
 
@@ -44,7 +46,11 @@ class BeforeAdventureScreen extends StatelessWidget {
                     'Difficulté : ${() {
                       String niv =
                           monumentData['niveau'].toString().split(" ")[0];
-                      return (niv == "3") ? "Difficile" : (niv == "2") ? "Moyen" : "Facile";
+                      return (niv == "3")
+                          ? "Difficile"
+                          : (niv == "2")
+                              ? "Moyen"
+                              : "Facile";
                     }()}',
                     style: const TextStyle(
                       fontSize: 16,
@@ -78,7 +84,10 @@ class BeforeAdventureScreen extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => PlacePage(monumentData: monumentData)),
+                        MaterialPageRoute(
+                          builder: (context) => AdventureLaunchScreen(
+                              adventureId: monumentData['id']),
+                        ),
                       );
                     },
                     child: const Text('Commencer la Chasse'),

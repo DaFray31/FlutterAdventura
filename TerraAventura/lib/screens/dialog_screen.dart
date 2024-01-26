@@ -25,10 +25,11 @@ class _AdventureLaunchScreenState extends State<AdventureLaunchScreen> {
       ),
       body: StreamBuilder(
         stream: SupabaseService.supabase
-            .from('dialogues')
-            .select()
+            .from('dialogues:etape_id=etapes.id,personnage_id=personnages.id')
+            .select('dialogues.texte, personnages.nom, etapes.titre')
+            .eq('etapes.aventure_id', widget.adventureId)
             .eq('etape_id', currentStep)
-            .order('ordre_dialogue', ascending: true)
+            .order('dialogues.ordre', ascending: true)
             .asStream(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
@@ -53,7 +54,8 @@ class _AdventureLaunchScreenState extends State<AdventureLaunchScreen> {
 
           return Column(
             children: [
-              Text(dialogues[currentDialogueIndex]['texte'].toString()),
+              Text(
+                  '${dialogues[currentDialogueIndex]['personnages.nom']}: ${dialogues[currentDialogueIndex]['dialogues.texte']}'),
               if (currentDialogueIndex < dialogues.length - 1)
                 ElevatedButton(
                   onPressed: () {
@@ -81,13 +83,29 @@ class _AdventureLaunchScreenState extends State<AdventureLaunchScreen> {
                         .eq('id', currentStep)
                         .single();
 
-                    if (response.data['code_secret'] == secretCode) {
+                    if (response['code_secret'] == secretCode) {
                       setState(() {
                         currentStep++;
                         currentDialogueIndex = 0;
                       });
                     } else {
-                      // Affichez un message d'erreur
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Erreur'),
+                            content: Text('Le code secret est incorrect.'),
+                            actions: [
+                              TextButton(
+                                child: Text('OK'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     }
                   },
                   child: Text('Valider'),
