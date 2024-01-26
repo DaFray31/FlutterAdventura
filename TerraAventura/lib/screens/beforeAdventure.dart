@@ -86,7 +86,8 @@ class BeforeAdventureScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => AdventureLaunchScreen(
-                              adventureId: monumentData['id']),
+                              adventureId: monumentData[
+                                  'id']), // Pass the adventure's id instead of the monument's id
                         ),
                       );
                     },

@@ -66,7 +66,9 @@ class AdventuresScreen extends StatelessWidget {
                   ],
                 ),
                 StreamBuilder(
-                  stream: SupabaseService.supabase.from('monuments').stream(primaryKey: ['id']), // Modify this line
+                  stream: SupabaseService.supabase
+                      .from('monuments')
+                      .stream(primaryKey: ['id']),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
@@ -96,34 +98,36 @@ class AdventuresScreen extends StatelessWidget {
                       double latitude = double.parse(pointValues[1]);
                       double longitude = double.parse(pointValues[0]);
 
-                      markers.add(
-                          Marker(
-                            point: LatLng(latitude, longitude),
-                            width: 80,
-                            height: 80,
-                            child: Column(
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.place,
-                                      // Replace with Icons.place for a "map pointer"
-                                      color: Colors.black,
-                                    ),
-                                    onPressed: () {
-                                      // Navigate to the TrainingPage
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => BeforeAdventureScreen(monumentData: monumentData)),
-                                      );
-                                    },
-                                  ),
-                                ],
+                      markers.add(Marker(
+                        point: LatLng(latitude, longitude),
+                        width: 80,
+                        height: 80,
+                        child: Column(
+                          children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.place,
+                                // Replace with Icons.place for a "map pointer"
+                                color: Colors.black,
+                              ),
+                              onPressed: () {
+                                // Navigate to the TrainingPage
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          BeforeAdventureScreen(
+                                              monumentData: monumentData)),
+                                );
+                              },
                             ),
-                          ));
-                      }
+                          ],
+                        ),
+                      ));
+                    }
 
-                          return MarkerLayer(markers: markers);
-                    },
+                    return MarkerLayer(markers: markers);
+                  },
                 ),
               ],
             ),
@@ -131,7 +135,9 @@ class AdventuresScreen extends StatelessWidget {
 
           Expanded(
             child: StreamBuilder(
-              stream: SupabaseService.supabase.from('monuments').stream(primaryKey: ['id']), // Modify this line
+              stream: SupabaseService.supabase
+                  .from('monuments')
+                  .stream(primaryKey: ['id']), // Modify this line
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
@@ -152,16 +158,26 @@ class AdventuresScreen extends StatelessWidget {
                   itemCount: data.length,
                   itemBuilder: (context, index) {
                     final monument = data[index];
-                    print(data);
-                    return ListTile(
-                      title: Text(monument['nom'].toString()),
-                      subtitle: Row(
-                        children: [
-                          Text(monument['duree'].toString()),
-                          const Text(' - '),
-                          Text(monument['distance'].toString()),
-                          const Text('km'),
-                        ],
+                    return InkWell(
+                      onTap: () {
+                        // Navigate to the BeforeAdventureScreen
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BeforeAdventureScreen(
+                                  monumentData: monument)),
+                        );
+                      },
+                      child: ListTile(
+                        title: Text(monument['nom'].toString()),
+                        subtitle: Row(
+                          children: [
+                            Text(monument['duree'].toString()),
+                            const Text(' - '),
+                            Text(monument['distance'].toString()),
+                            const Text('km'),
+                          ],
+                        ),
                       ),
                     );
                   },
