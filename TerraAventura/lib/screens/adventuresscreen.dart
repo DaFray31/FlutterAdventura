@@ -4,6 +4,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:terraaventura/functions/supabase_client.dart'; // Ajoutez cette ligne
 
+import 'beforeAdventure.dart';
+
 class AdventuresScreen extends StatelessWidget {
   const AdventuresScreen({Key? key}) : super(key: key);
 
@@ -96,17 +98,33 @@ class AdventuresScreen extends StatelessWidget {
                       double longitude = double.parse(pointValues[0]);
 
                       markers.add(
-                        Marker(
-                          point: LatLng(latitude, longitude),
-                          width: 80,
-                          height: 80,
-                          child: const FlutterLogo(),
-                        ),
-                      );
-                    }
+                          Marker(
+                            point: LatLng(latitude, longitude),
+                            width: 80,
+                            height: 80,
+                            child: Column(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.place,
+                                      // Remplacez par Icons.place pour un "map pointer"
+                                      color: Colors.black,
+                                    ),
+                                    onPressed: () {
+                                      // Naviguer vers la page TrainingPage
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => BeforeAdventureScreen(monumentData: monumentData)),
+                                      );
+                                    },
+                                  ),
+                                ],
+                            ),
+                          ));
+                      }
 
-                    return MarkerLayer(markers: markers);
-                  },
+                          return MarkerLayer(markers: markers);
+                    },
                 ),
               ],
             ),
@@ -135,6 +153,7 @@ class AdventuresScreen extends StatelessWidget {
                   itemCount: data.length,
                   itemBuilder: (context, index) {
                     final monument = data[index];
+                    print(data);
                     return ListTile(
                       title: Text(monument['nom'].toString()),
                       subtitle: Row(
