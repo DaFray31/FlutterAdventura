@@ -12,10 +12,21 @@ class AdventureLaunchScreen extends StatefulWidget {
 }
 
 class _AdventureLaunchScreenState extends State<AdventureLaunchScreen> {
-  int currentStep = 1;
+  List<int> steps = [];
+  int currentStepIndex = 0;
   int currentDialogueIndex = 0;
   List<dynamic> dialogues = [];
   String secretCode = '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchSteps().then((result) {
+      setState(() {
+        steps = result;
+      });
+    });
+  }
 
   Future<String> getPersonnageName(int personnageId) async {
     var response = await SupabaseService.supabase
@@ -27,129 +38,165 @@ class _AdventureLaunchScreenState extends State<AdventureLaunchScreen> {
     return response['nom'];
   }
 
+  Future<List<int>> fetchSteps() async {
+    var response = await SupabaseService.supabase
+        .from('etapes')
+        .select('id')
+        .eq('aventure_id', widget.adventureId)
+        .order('ordre', ascending: true)
+        .asStream()
+        .toList();
+
+    print('Response from fetchSteps: $response');
+
+    if (response.isEmpty || response[0].isEmpty) {
+      return [];
+    }
+
+    return response[0].map<int>((e) => int.parse(e['id'].toString())).toList();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Lancement de l\'aventure'),
+        title: const Text('Lancement de l\'aventure'),
       ),
-      body: StreamBuilder(
-        stream: SupabaseService.supabase
-            .from('dialogues')
-            .select('id, etape_id, personnage_id, ordre, texte')
-            .eq('etape_id', currentStep)
-            .asStream(),
+      body: FutureBuilder<List<int>>(
+        future: fetchSteps(),
         builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          }
-
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
 
-          if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
-            return Center(
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(
               child: Text('Aucun dialogue disponible.'),
             );
           }
 
-          dialogues = snapshot.data as List;
+          steps = snapshot.data!;
+          return StreamBuilder(
+            stream: SupabaseService.supabase
+                .from('dialogues')
+                .select(
+                'id, etape_id, personnage_id,ordre, texte, etapes!inner(id, code_secret)')
+                .eq('etapes.aventure_id', widget.adventureId)
+                .eq('etapes.id', steps[currentStepIndex]) // Use the actual etape_id from the steps list
+                .order('ordre', ascending: true)
+                .asStream(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text('Error: ${snapshot.error}'),
+                );
+              }
 
-          return Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  itemCount: currentDialogueIndex + 1,
-                  itemBuilder: (context, index) {
-                    return FutureBuilder(
-                      future:
-                          getPersonnageName(dialogues[index]['personnage_id']),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return ListTile(
-                            leading: Icon(Icons.person),
-                            title: Text('Loading...'),
-                            subtitle: Text('${dialogues[index]['texte']}'),
-                          );
-                        }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
 
-                        if (snapshot.hasError) {
-                          return ListTile(
-                            leading: Icon(Icons.person),
-                            title: Text('Error: ${snapshot.error}'),
-                            subtitle: Text('${dialogues[index]['texte']}'),
-                          );
-                        }
+              if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
+                return const Center(
+                  child: Text('Aucun dialogue disponible.'),
+                );
+              }
 
-                        return ListTile(
-                          leading: Icon(Icons.person),
-                          title: Text('${snapshot.data}'),
-                          subtitle: Text('${dialogues[index]['texte']}'),
+              dialogues = snapshot.data as List;
+
+              return Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: currentDialogueIndex + 1,
+                      itemBuilder: (context, index) {
+                        return FutureBuilder(
+                          future: getPersonnageName(
+                              dialogues[index]['personnage_id']),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return ListTile(
+                                leading: const Icon(Icons.person),
+                                title: const Text('Loading...'),
+                                subtitle: Text('${dialogues[index]['texte']}'),
+                              );
+                            }
+
+                            if (snapshot.hasError) {
+                              return ListTile(
+                                leading: const Icon(Icons.person),
+                                title: Text('Error: ${snapshot.error}'),
+                                subtitle: Text('${dialogues[index]['texte']}'),
+                              );
+                            }
+
+                            return ListTile(
+                              leading: const Icon(Icons.person),
+                              title: Text('${snapshot.data}'),
+                              subtitle: Text('${dialogues[index]['texte']}'),
+                            );
+                          },
                         );
                       },
-                    );
-                  },
-                ),
-              ),
-              ElevatedButton(
-                onPressed: currentDialogueIndex < dialogues.length - 1
-                    ? () {
-                        setState(() {
-                          currentDialogueIndex++;
-                        });
-                      }
-                    : null,
-                child: Text('Suivant'),
-              ),
-              if (currentDialogueIndex >= dialogues.length - 1)
-                Column(
-                  children: [
-                    TextField(
-                      onChanged: (value) {
-                        secretCode = value;
-                      },
-                      decoration: InputDecoration(
-                        labelText: 'Entrez le code secret',
-                      ),
                     ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        var response = await SupabaseService.supabase
-                            .from('etapes')
-                            .select('code_secret')
-                            .eq('id', currentStep)
-                            .single();
+                  ),
+                  ElevatedButton(
+                    onPressed: currentDialogueIndex < dialogues.length - 1
+                        ? () {
+                            setState(() {
+                              currentDialogueIndex++;
+                            });
+                          }
+                        : null,
+                    child: const Text('Suivant'),
+                  ),
+                  if (currentDialogueIndex >= dialogues.length - 1)
+                    Column(
+                      children: [
+                        TextField(
+                          onChanged: (value) {
+                            secretCode = value;
+                          },
+                          decoration: const InputDecoration(
+                            labelText: 'Entrez le code secret',
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            var response = await SupabaseService.supabase
+                                .from('etapes')
+                                .select('code_secret')
+                                .eq('id', steps[currentStepIndex])
+                                .single();
 
-                        print(
-                            'Response code_secret: ${response['code_secret']}'); // Debug print statement
-                        print(
-                            'Entered secretCode: $secretCode'); // Debug print statement
-
-                        if (response['code_secret'] == secretCode) {
-                          setState(() {
-                            currentStep++;
-                            currentDialogueIndex = 0;
-                          });
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Code secret incorrect'),
-                            ),
-                          );
-                        }
-                      },
-                      child: Text('Changer d\'étape'),
+                            if (response['code_secret'] == secretCode) {
+                              setState(() {
+                                currentStepIndex++;
+                                currentDialogueIndex =
+                                    0; // Reset currentDialogueIndex
+                              });
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Code secret incorrect'),
+                                ),
+                              );
+                            }
+                          },
+                          child: const Text('Changer d\'étape'),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              Text('Etape $currentStep / ${dialogues.length}'),
-            ],
+                  Text('Etape ${currentStepIndex + 1} / ${steps.length}'),
+                ],
+              );
+            },
           );
         },
       ),

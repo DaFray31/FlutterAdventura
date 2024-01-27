@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:terraaventura/screens/place_page.dart';
 import 'package:terraaventura/functions/supabase_client.dart'; // Import SupabaseService
 
 import '../widgets/AdventureCard.dart';
-import 'dialog_screen.dart';
 
 class BeforeAdventureScreen extends StatelessWidget {
   final dynamic monumentData;
@@ -12,7 +10,7 @@ class BeforeAdventureScreen extends StatelessWidget {
       : super(key: key);
 
   Future<List<dynamic>> fetchAdventures() async {
-    final response = await SupabaseService.supabase
+    final response = SupabaseService.supabase
         .from('aventures')
         .select()
         .eq('monument_id', monumentData['id'])

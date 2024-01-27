@@ -23,7 +23,7 @@ class AdventureCard extends StatelessWidget {
       },
       child: Card(
         child: ListTile(
-          leading: Icon(Icons.place_outlined),
+          leading: const Icon(Icons.place_outlined),
           title: Text(adventureMap['titre']),
           subtitle: Text(adventureMap['description']),
         ),
