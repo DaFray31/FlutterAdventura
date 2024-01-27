@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:terraaventura/screens/dialog_screen.dart';
+import 'package:terraaventura/screens/adventureScreen.dart';
 
 class AdventureCard extends StatelessWidget {
   final dynamic adventure;

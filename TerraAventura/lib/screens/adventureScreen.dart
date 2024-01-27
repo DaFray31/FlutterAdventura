@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:terraaventura/functions/supabase_client.dart';
+import 'package:terraaventura/widgets/DialoguesWidget.dart'; // Import DialoguesWidget
 
-import 'EndScreen.dart';
+import 'endScreen.dart';
 
 class AdventureLaunchScreen extends StatefulWidget {
   final int adventureId;
@@ -84,7 +85,7 @@ class _AdventureLaunchScreenState extends State<AdventureLaunchScreen> {
             stream: SupabaseService.supabase
                 .from('dialogues')
                 .select(
-                    'id, etape_id, personnage_id,ordre, texte, etapes!inner(id, code_secret)')
+                    'id, etape_id, personnage_id,ordre, texte, etapes!inner(id, code_secret),personnages!inner(nom)')
                 .eq('etapes.aventure_id', widget.adventureId)
                 .eq(
                     'etapes.id',
@@ -116,61 +117,47 @@ class _AdventureLaunchScreenState extends State<AdventureLaunchScreen> {
               return Column(
                 children: [
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: currentDialogueIndex + 1,
-                      itemBuilder: (context, index) {
-                        return FutureBuilder(
-                          future: getPersonnageName(
-                              dialogues[index]['personnage_id']),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return ListTile(
-                                leading: const Icon(Icons.person),
-                                title: const Text('Loading...'),
-                                subtitle: Text('${dialogues[index]['texte']}'),
-                              );
-                            }
-
-                            if (snapshot.hasError) {
-                              return ListTile(
-                                leading: const Icon(Icons.person),
-                                title: Text('Error: ${snapshot.error}'),
-                                subtitle: Text('${dialogues[index]['texte']}'),
-                              );
-                            }
-
-                            return ListTile(
-                              leading: const Icon(Icons.person),
-                              title: Text('${snapshot.data}'),
-                              subtitle: Text('${dialogues[index]['texte']}'),
-                            );
-                          },
-                        );
-                      },
+                    child: DialoguesWidget(
+                      dialogues: dialogues,
+                      currentDialogueIndex: currentDialogueIndex,
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: currentDialogueIndex < dialogues.length - 1
-                        ? () {
-                            setState(() {
-                              currentDialogueIndex++;
-                            });
-                          }
-                        : null,
-                    child: const Text('Suivant'),
-                  ),
-                  if (currentDialogueIndex >= dialogues.length - 1)
-                    Column(
+                  if (currentDialogueIndex < dialogues.length - 1)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        TextField(
-                          onChanged: (value) {
-                            secretCode = value;
-                          },
-                          decoration: const InputDecoration(
-                            labelText: 'Entrez le code secret',
+                        if (currentDialogueIndex > 0)
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                currentDialogueIndex--;
+                              });
+                            },
+                            child: const Text('Précédent'),
                           ),
+                        ElevatedButton(
+                          onPressed: currentDialogueIndex < dialogues.length - 1
+                              ? () {
+                                  setState(() {
+                                    currentDialogueIndex++;
+                                  });
+                                }
+                              : null,
+                          child: const Text('Suivant'),
                         ),
+                      ],
+                    ),
+                  if (currentDialogueIndex >= dialogues.length - 1)
+                    AlertDialog(
+                      title: TextField(
+                        onChanged: (value) {
+                          secretCode = value;
+                        },
+                        decoration: const InputDecoration(
+                          labelText: 'Entrez le code secret',
+                        ),
+                      ),
+                      actions: [
                         ElevatedButton(
                           onPressed: () async {
                             var response = await SupabaseService.supabase

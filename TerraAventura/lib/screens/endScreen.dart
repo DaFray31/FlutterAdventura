@@ -33,7 +33,7 @@ class EndScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => HomePage()), // Replace HomePage() with your actual home page widget
+                    MaterialPageRoute(builder: (context) => const HomePage()), // Replace HomePage() with your actual home page widget
                     (Route<dynamic> route) => false,
                   );
                 },
