@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:terraaventura/functions/supabase_client.dart';
 
+import 'EndScreen.dart';
+
 class AdventureLaunchScreen extends StatefulWidget {
   final int adventureId;
 
@@ -56,7 +58,6 @@ class _AdventureLaunchScreenState extends State<AdventureLaunchScreen> {
     return response[0].map<int>((e) => int.parse(e['id'].toString())).toList();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,9 +84,12 @@ class _AdventureLaunchScreenState extends State<AdventureLaunchScreen> {
             stream: SupabaseService.supabase
                 .from('dialogues')
                 .select(
-                'id, etape_id, personnage_id,ordre, texte, etapes!inner(id, code_secret)')
+                    'id, etape_id, personnage_id,ordre, texte, etapes!inner(id, code_secret)')
                 .eq('etapes.aventure_id', widget.adventureId)
-                .eq('etapes.id', steps[currentStepIndex]) // Use the actual etape_id from the steps list
+                .eq(
+                    'etapes.id',
+                    steps[
+                        currentStepIndex]) // Use the actual etape_id from the steps list
                 .order('ordre', ascending: true)
                 .asStream(),
             builder: (context, snapshot) {
@@ -176,11 +180,22 @@ class _AdventureLaunchScreenState extends State<AdventureLaunchScreen> {
                                 .single();
 
                             if (response['code_secret'] == secretCode) {
-                              setState(() {
-                                currentStepIndex++;
-                                currentDialogueIndex =
-                                    0; // Reset currentDialogueIndex
-                              });
+                              if (currentStepIndex < steps.length - 1) {
+                                setState(() {
+                                  currentStepIndex++;
+                                  currentDialogueIndex =
+                                      0; // Reset currentDialogueIndex
+                                });
+                              } else {
+                                // Navigate to EndScreen when there are no more steps
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EndScreen(
+                                        adventureId: widget.adventureId),
+                                  ),
+                                );
+                              }
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
