@@ -30,42 +30,54 @@ class _AdventureLaunchScreenState extends State<AdventureLaunchScreen> {
   }
 
   Future<void> fetchAdventureName() async {
-    var response = await SupabaseService.supabase
-        .from('aventures')
-        .select('titre')
-        .eq('id', widget.adventureId)
-        .single();
+    try {
+      var response = await SupabaseService.supabase
+          .from('aventures')
+          .select('titre')
+          .eq('id', widget.adventureId)
+          .single();
 
-    if (response.isNotEmpty) {
-      adventureName = response['titre'].toString();
+      if (response.isNotEmpty) {
+        adventureName = response['titre'].toString();
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching adventure name: $e')),
+      );
     }
   }
 
   Future<void> fetchSteps() async {
-    var response = await SupabaseService.supabase
-        .from('etapes')
-        .select('id')
-        .eq('aventure_id', widget.adventureId)
-        .order('ordre', ascending: true)
-        .asStream()
-        .toList();
+    try {
+      var response = await SupabaseService.supabase
+          .from('etapes')
+          .select('id')
+          .eq('aventure_id', widget.adventureId)
+          .order('ordre', ascending: true)
+          .asStream()
+          .toList();
 
-    print('Response from fetchSteps: $response');
+      if (response.isEmpty || response[0].isEmpty) {
+        steps = [];
+      } else {
+        steps = response[0].map<int>((e) => int.parse(e['id'].toString())).toList();
+      }
 
-    if (response.isEmpty || response[0].isEmpty) {
-      steps = [];
-    } else {
-      steps = response[0].map<int>((e) => int.parse(e['id'].toString())).toList();
+      setState(() {});
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching steps: $e')),
+      );
     }
-
-    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(adventureName.isEmpty ? 'Loading...' : adventureName),
+        title: adventureName.isEmpty
+            ? CircularProgressIndicator()
+            : Text(adventureName),
       ),
       body: steps.isEmpty
           ? const Center(
