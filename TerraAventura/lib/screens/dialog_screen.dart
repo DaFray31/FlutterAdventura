@@ -67,9 +67,11 @@ class _AdventureLaunchScreenState extends State<AdventureLaunchScreen> {
                   itemCount: currentDialogueIndex + 1,
                   itemBuilder: (context, index) {
                     return FutureBuilder(
-                      future: getPersonnageName(dialogues[index]['personnage_id']),
+                      future:
+                          getPersonnageName(dialogues[index]['personnage_id']),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return ListTile(
                             leading: Icon(Icons.person),
                             title: Text('Loading...'),
@@ -95,14 +97,6 @@ class _AdventureLaunchScreenState extends State<AdventureLaunchScreen> {
                   },
                 ),
               ),
-              TextField(
-                onChanged: (value) {
-                  secretCode = value;
-                },
-                decoration: InputDecoration(
-                  labelText: 'Entrez le code secret',
-                ),
-              ),
               ElevatedButton(
                 onPressed: currentDialogueIndex < dialogues.length - 1
                     ? () {
@@ -113,14 +107,29 @@ class _AdventureLaunchScreenState extends State<AdventureLaunchScreen> {
                     : null,
                 child: Text('Suivant'),
               ),
-              ElevatedButton(
-                onPressed: currentDialogueIndex >= dialogues.length - 1
-                    ? () async {
+              if (currentDialogueIndex >= dialogues.length - 1)
+                Column(
+                  children: [
+                    TextField(
+                      onChanged: (value) {
+                        secretCode = value;
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Entrez le code secret',
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
                         var response = await SupabaseService.supabase
-                            .from('codes_secrets')
+                            .from('etapes')
                             .select('code_secret')
-                            .eq('etape_id', currentStep)
+                            .eq('id', currentStep)
                             .single();
+
+                        print(
+                            'Response code_secret: ${response['code_secret']}'); // Debug print statement
+                        print(
+                            'Entered secretCode: $secretCode'); // Debug print statement
 
                         if (response['code_secret'] == secretCode) {
                           setState(() {
@@ -128,28 +137,17 @@ class _AdventureLaunchScreenState extends State<AdventureLaunchScreen> {
                             currentDialogueIndex = 0;
                           });
                         } else {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('Erreur'),
-                                content: Text('Le code secret est incorrect.'),
-                                actions: [
-                                  TextButton(
-                                    child: Text('OK'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Code secret incorrect'),
+                            ),
                           );
                         }
-                      }
-                    : null,
-                child: Text('Changer d\'étape'),
-              ),
+                      },
+                      child: Text('Changer d\'étape'),
+                    ),
+                  ],
+                ),
               Text('Etape $currentStep / ${dialogues.length}'),
             ],
           );
