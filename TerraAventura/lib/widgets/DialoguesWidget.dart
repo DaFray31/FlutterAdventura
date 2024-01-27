@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class DialoguesWidget extends StatelessWidget {
   final List<dynamic> dialogues;
@@ -40,7 +41,8 @@ class DialoguesWidget extends StatelessWidget {
                       elevation: 5,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text('${dialogues[index]['texte']}'),
+                        child: MarkdownBody(data: dialogues[index]['texte']),
+                        //Text('${dialogues[index]['texte']}'),
                       ),
                     ),
                   ],
