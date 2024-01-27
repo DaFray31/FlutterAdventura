@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:terraaventura/functions/supabase_client.dart'; // Ajoutez cette ligne
+import 'package:terraaventura/functions/supabase_client.dart'; // Add this line
+
+import 'beforeAdventure.dart';
 
 class AdventuresScreen extends StatelessWidget {
   const AdventuresScreen({Key? key}) : super(key: key);
@@ -12,16 +13,16 @@ class AdventuresScreen extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          // Barre de recherche
+          // Search bar
           const Padding(
             padding: EdgeInsets.all(8.0),
             child: TextField(
               decoration: InputDecoration(
-                labelText: 'Rechercher',
+                labelText: 'Search',
               ),
             ),
           ),
-          // Titre centré
+          // Centered title
           const Center(
             child: Padding(
               padding: EdgeInsets.all(16.0),
@@ -34,7 +35,7 @@ class AdventuresScreen extends StatelessWidget {
               ),
             ),
           ),
-          // Sous-titre centré
+          // Centered subtitle
           const Center(
             child: Text(
               'Monuments',
@@ -44,7 +45,7 @@ class AdventuresScreen extends StatelessWidget {
               ),
             ),
           ),
-          // Carte
+          // Map
           Expanded(
             //map
             child: FlutterMap(
@@ -65,7 +66,9 @@ class AdventuresScreen extends StatelessWidget {
                   ],
                 ),
                 StreamBuilder(
-                  stream: SupabaseService.supabase.from('monuments').stream(primaryKey: ['id']), // Modifiez cette ligne
+                  stream: SupabaseService.supabase
+                      .from('monuments')
+                      .stream(primaryKey: ['id']),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
@@ -95,14 +98,32 @@ class AdventuresScreen extends StatelessWidget {
                       double latitude = double.parse(pointValues[1]);
                       double longitude = double.parse(pointValues[0]);
 
-                      markers.add(
-                        Marker(
-                          point: LatLng(latitude, longitude),
-                          width: 80,
-                          height: 80,
-                          child: const FlutterLogo(),
+                      markers.add(Marker(
+                        point: LatLng(latitude, longitude),
+                        width: 80,
+                        height: 80,
+                        child: Column(
+                          children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.place,
+                                // Replace with Icons.place for a "map pointer"
+                                color: Colors.black,
+                              ),
+                              onPressed: () {
+                                // Navigate to the TrainingPage
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          BeforeAdventureScreen(
+                                              monumentData: monumentData)),
+                                );
+                              },
+                            ),
+                          ],
                         ),
-                      );
+                      ));
                     }
 
                     return MarkerLayer(markers: markers);
@@ -114,7 +135,9 @@ class AdventuresScreen extends StatelessWidget {
 
           Expanded(
             child: StreamBuilder(
-              stream: SupabaseService.supabase.from('monuments').stream(primaryKey: ['id']), // Modifiez cette ligne
+              stream: SupabaseService.supabase
+                  .from('monuments')
+                  .stream(primaryKey: ['id']), // Modify this line
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
@@ -135,15 +158,26 @@ class AdventuresScreen extends StatelessWidget {
                   itemCount: data.length,
                   itemBuilder: (context, index) {
                     final monument = data[index];
-                    return ListTile(
-                      title: Text(monument['nom'].toString()),
-                      subtitle: Row(
-                        children: [
-                          Text(monument['duree'].toString()),
-                          const Text(' - '),
-                          Text(monument['distance'].toString()),
-                          const Text('km'),
-                        ],
+                    return InkWell(
+                      onTap: () {
+                        // Navigate to the BeforeAdventureScreen
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BeforeAdventureScreen(
+                                  monumentData: monument)),
+                        );
+                      },
+                      child: ListTile(
+                        title: Text(monument['nom'].toString()),
+                        subtitle: Row(
+                          children: [
+                            Text(monument['duree'].toString()),
+                            const Text(' - '),
+                            Text(monument['distance'].toString()),
+                            const Text('km'),
+                          ],
+                        ),
                       ),
                     );
                   },
