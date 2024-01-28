@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:terraaventura/screens/homescreen.dart';
 import 'package:terraaventura/screens/questsscreen.dart';
 import 'package:terraaventura/screens/monumentsScreen.dart';
-import 'package:terraaventura/screens/newsscreen.dart';
+import 'package:terraaventura/screens/newsScreen.dart';
 import 'package:terraaventura/screens/profilescreen.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
     const HomeScreen(),
     const QuestsScreen(),
     const AdventuresScreen(),
-    const NewsScreen(),
+    NewsScreen(),
     const ProfileScreen(),
   ];
 

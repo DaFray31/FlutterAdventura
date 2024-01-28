@@ -76,7 +76,7 @@ class _AdventureLaunchScreenState extends State<AdventureLaunchScreen> {
     return Scaffold(
       appBar: AppBar(
         title: adventureName.isEmpty
-            ? CircularProgressIndicator()
+            ? const CircularProgressIndicator()
             : Text(adventureName),
       ),
       body: steps.isEmpty
