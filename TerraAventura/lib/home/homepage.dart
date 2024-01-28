@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:terraaventura/screens/homescreen.dart';
-import 'package:terraaventura/screens/questsscreen.dart';
-import 'package:terraaventura/screens/adventuresscreen.dart';
-import 'package:terraaventura/screens/newsscreen.dart';
+import 'package:terraaventura/screens/monumentsScreen.dart';
+import 'package:terraaventura/screens/newsScreen.dart';
 import 'package:terraaventura/screens/profilescreen.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,9 +17,8 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _pages = [
     const HomeScreen(),
-    const QuestsScreen(),
     const AdventuresScreen(),
-    const NewsScreen(),
+    NewsScreen(),
     const ProfileScreen(),
   ];
 
@@ -32,15 +30,12 @@ class _HomePageState extends State<HomePage> {
           _currentTitle = 'Accueil';
           break;
         case 1:
-          _currentTitle = 'Quêtes';
-          break;
-        case 2:
           _currentTitle = 'Aventures';
           break;
-        case 3:
+        case 2:
           _currentTitle = 'Actualités';
           break;
-        case 4:
+        case 3:
           _currentTitle = 'Profil';
           break;
       }
@@ -70,10 +65,6 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Accueil',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.assignment),
-            label: 'Quêtes',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.explore),
