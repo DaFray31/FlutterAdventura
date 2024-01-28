@@ -1,15 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:terraaventura/
+
 
 class NewsScreen extends StatelessWidget {
-  const NewsScreen({super.key});
+  final RssService rssService = RssService();
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Page des Actualités',
-        style: TextStyle(fontSize: 20),
-      ),
+    return FutureBuilder<List<NewsItem>>(
+      future: rssService.fetchRss(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ListView.builder(
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              final item = snapshot.data![index];
+              return ListTile(
+                title: Text(item.title),
+                subtitle: Text(item.description),
+              );
+            },
+          );
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
     );
   }
 }
