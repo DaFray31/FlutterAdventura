@@ -3,7 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:terraaventura/functions/supabase_client.dart'; // Add this line
 
-import 'beforeAdventure.dart';
+import 'monumentScreen.dart';
 
 class AdventuresScreen extends StatelessWidget {
   const AdventuresScreen({Key? key}) : super(key: key);
