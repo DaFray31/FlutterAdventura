@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:terraaventura/screens/adventureScreen.dart';
 
 import '../screens/place_page.dart';
 
