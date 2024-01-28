@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:terraaventura/screens/homescreen.dart';
 import 'package:terraaventura/screens/monumentsScreen.dart';
 import 'package:terraaventura/screens/newsScreen.dart';
-import 'package:terraaventura/screens/profilescreen.dart';
+import 'package:terraaventura/screens/profileScreen.dart';
 
 import '../screens/settingsscreen.dart';
 
@@ -67,11 +67,11 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.settings),
+          icon: const Icon(Icons.settings),
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => SettingsScreen()),
+              MaterialPageRoute(builder: (context) => const SettingsScreen()),
             );
           },
         ),
