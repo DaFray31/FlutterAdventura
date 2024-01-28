@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../functions/NewsItem.dart';
 
 class NewsDetailScreen extends StatelessWidget {
@@ -20,6 +21,7 @@ class NewsDetailScreen extends StatelessWidget {
                 ? Image.network(newsItem.imageUrl)
                 : Container(),
             Text(newsItem.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
+            Text(DateFormat('dd MMM yyyy').format(newsItem.pubDate)),
             Text(newsItem.description),
           ],
         ),

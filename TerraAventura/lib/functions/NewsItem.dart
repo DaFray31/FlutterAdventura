@@ -2,7 +2,7 @@ class NewsItem {
   final String title;
   final String link;
   final String creator;
-  final String pubDate;
+  final DateTime pubDate;
   final String category;
   final String guid;
   final String description;
