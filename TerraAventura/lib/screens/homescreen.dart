@@ -8,7 +8,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bienvenue à Terra Aventure'),
+        title: const Text('Bienvenue à Flutter Adventura'),
         backgroundColor: Colors.green,
       ),
       body: SingleChildScrollView(
@@ -44,7 +44,6 @@ class HomeScreen extends StatelessWidget {
                 );
               }).toList(),
             ),
-
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(

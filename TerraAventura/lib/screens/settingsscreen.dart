@@ -28,8 +28,8 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  void _launchURL() async =>
-      await canLaunch('https://github.com/DaFray31/FlutterAdventura')
-          ? await launch('https://github.com/DaFray31/FlutterAdventura')
-          : throw 'Could not launch https://github.com/DaFray31/FlutterAdventura';
+  void _launchURL() async => await canLaunch(
+          'https://github.com/DaFray31/FlutterAdventura')
+      ? await launch('https://github.com/DaFray31/FlutterAdventura')
+      : throw 'Could not launch https://github.com/DaFray31/FlutterAdventura';
 }

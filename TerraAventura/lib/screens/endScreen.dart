@@ -47,8 +47,6 @@ class EndScreenState extends State<EndScreen> {
     if (response != null) {
       print('Error updating user profile: ${response.error!.message}');
     }
-
-
   }
 
   Future<void> addToComment() async {
@@ -73,7 +71,8 @@ class EndScreenState extends State<EndScreen> {
           print('Error adding comment: ${response.error!.message}');
         } else if (response.data != null) {
           // La réponse contient une propriété 'data', ce qui indique une insertion réussie
-          print('Comment added successfully with rating: $selectedStarCount stars');
+          print(
+              'Comment added successfully with rating: $selectedStarCount stars');
           // Mettre à jour l'état pour indiquer que le commentaire a été ajouté avec succès
 
           widget.commentController.clear();
@@ -175,14 +174,14 @@ class EndScreenState extends State<EndScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () async {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomePage()),
-                );
                 await completeAdventure(widget.adventureId);
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const HomePage()),
+                  (Route<dynamic> route) => false,
+                );
               },
               child: const Text('Retour à la page d\'accueil'),
-            ),
+            )
           ],
         ),
       ),

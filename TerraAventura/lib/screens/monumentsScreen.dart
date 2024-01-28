@@ -94,7 +94,7 @@ class _SearchBarState extends State<_SearchBar> {
           ),
         ),
         if (_searchResults.isNotEmpty)
-          Container(
+          SizedBox(
             height: 200,
             child: ListView.builder(
               itemCount: _searchResults.length,
@@ -245,7 +245,7 @@ class _AdventuresListState extends State<_AdventuresList> {
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream:
-      SupabaseService.supabase.from('monuments').stream(primaryKey: ['id']),
+          SupabaseService.supabase.from('monuments').stream(primaryKey: ['id']),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');

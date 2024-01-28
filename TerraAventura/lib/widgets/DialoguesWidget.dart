@@ -21,36 +21,40 @@ class DialoguesWidget extends StatelessWidget {
     };
 
     return ListView.builder(
-  itemCount: currentDialogueIndex + 1,
-  itemBuilder: (context, index) {
-    return Container(
-      margin: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(dialogues[index]['personnages']['nom'], style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w300, fontStyle: FontStyle.italic)),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+      itemCount: currentDialogueIndex + 1,
+      itemBuilder: (context, index) {
+        return Container(
+          margin: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
-                Icons.person,
-                color: personnageColors[dialogues[index]['personnage_id']],
-              ),
-              Expanded(
-                child: Card(
-                  elevation: 5,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: MarkdownBody(data: dialogues[index]['texte']),
+              Text(dialogues[index]['personnages']['nom'],
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w300,
+                      fontStyle: FontStyle.italic)),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.person,
+                    color: personnageColors[dialogues[index]['personnage_id']],
                   ),
-                ),
+                  Expanded(
+                    child: Card(
+                      elevation: 5,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: MarkdownBody(data: dialogues[index]['texte']),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
-  },
-);
   }
 }

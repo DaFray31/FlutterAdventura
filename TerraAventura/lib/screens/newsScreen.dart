@@ -36,20 +36,23 @@ class _NewsScreenState extends State<NewsScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => NewsDetailScreen(newsItem: item),
+                          builder: (context) =>
+                              NewsDetailScreen(newsItem: item),
                         ),
                       );
                     },
                     child: Card(
                       child: ListTile(
                         leading: SizedBox(
-                          width: 50.0, // specify the width of the leading widget
+                          width:
+                              50.0, // specify the width of the leading widget
                           child: item.imageUrl.isNotEmpty
                               ? Image.network(item.imageUrl)
                               : Container(),
                         ),
                         title: Text(item.title,
-                            style: const TextStyle(fontWeight: FontWeight.bold)),
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
                         subtitle: Text(
                             DateFormat('dd MMM yyyy').format(item.pubDate)),
                       ),

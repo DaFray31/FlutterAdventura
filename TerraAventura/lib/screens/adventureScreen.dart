@@ -60,7 +60,8 @@ class _AdventureLaunchScreenState extends State<AdventureLaunchScreen> {
       if (response.isEmpty || response[0].isEmpty) {
         steps = [];
       } else {
-        steps = response[0].map<int>((e) => int.parse(e['id'].toString())).toList();
+        steps =
+            response[0].map<int>((e) => int.parse(e['id'].toString())).toList();
       }
 
       setState(() {});
@@ -135,13 +136,14 @@ class _AdventureLaunchScreenState extends State<AdventureLaunchScreen> {
                               child: const Text('Précédent'),
                             ),
                           ElevatedButton(
-                            onPressed: currentDialogueIndex < dialogues.length - 1
-                                ? () {
-                                    setState(() {
-                                      currentDialogueIndex++;
-                                    });
-                                  }
-                                : null,
+                            onPressed:
+                                currentDialogueIndex < dialogues.length - 1
+                                    ? () {
+                                        setState(() {
+                                          currentDialogueIndex++;
+                                        });
+                                      }
+                                    : null,
                             child: const Text('Suivant'),
                           ),
                         ],
