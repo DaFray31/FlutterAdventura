@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     const HomeScreen(),
     const AdventuresScreen(),
-    NewsScreen(),
+    const NewsScreen(),
     const ProfileScreen(),
   ];
 

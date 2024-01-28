@@ -92,7 +92,7 @@ class BeforeAdventureScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      Text(monumentData['commentaires'].toString()),
+                      Text(monumentData['description'].toString()),
                       const SizedBox(height: 10),
                       const Text(
                         'Conseils',
