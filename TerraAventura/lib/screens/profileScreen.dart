@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:terraaventura/functions/supabase_client.dart';
 
@@ -47,8 +48,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return Text('Error: ${snapshot.error}');
         } else {
           final profile = snapshot.data!;
-          final avatarUrl = profile['avatar'] as String?;
-          final completedAdventures = (profile['adventure_completion'] as List<dynamic>?) ?? [];
+          final avatarUrl = profile['avatar_url'] as String?;
+          final completedAdventures =
+              (profile['adventure_completion'] as Map<String, dynamic>?) ?? {};
 
           return ListView(
             padding: const EdgeInsets.all(16.0),
@@ -65,15 +67,69 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 20),
               Text('Email: ${SupabaseManager.currentUser()!.email}'),
               const SizedBox(height: 20),
-              ...completedAdventures.map((adventure) {
-                final adventureId = adventure['adventure_id'];
-                final completionDate =
-                    DateTime.parse(adventure['completion_date']).toLocal();
-                return ListTile(
-                  title: Text('Adventure ID: $adventureId'),
-                  subtitle: Text('Completion Date: $completionDate'),
-                );
-              }).toList(),
+              FutureBuilder(
+                future: getAdventureTitle(
+                    completedAdventures['adventure_id'].toString()),
+                builder: (context, AsyncSnapshot<String> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          CircularProgressIndicator(),
+                          SizedBox(height: 20),
+                          Text('Loading adventure details...',
+                              style: TextStyle(fontSize: 16)),
+                        ],
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          const Icon(Icons.error_outline,
+                              color: Colors.red, size: 60),
+                          const SizedBox(height: 20),
+                          Text('Error: ${snapshot.error}',
+                              style: const TextStyle(fontSize: 16)),
+                          const SizedBox(height: 20),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.blue,
+                            ),
+                            onPressed: () => setState(() {}),
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    return Column(
+                      children: ListTile.divideTiles(
+                        context: context,
+                        tiles: [
+                          const ListTile(
+                            title: Text('Aventures complétées',
+                                style: TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.bold)),
+                          ),
+                          ListTile(
+                            leading: const Icon(Icons.place_sharp, size: 50),
+                            title: Text('${snapshot.data}',
+                                style: const TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold)),
+                            subtitle: Text(
+                                'Fin de l\'aventure : ${DateFormat('dd/MM/yyyy').format(DateTime.parse(completedAdventures['completion_date'].toString()).toLocal())}',
+                                style: const TextStyle(fontSize: 16)),
+                          ),
+                        ],
+                      ).toList(),
+                    );
+                  }
+                },
+              ),
               const SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -107,10 +163,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .single();
 
     if (response.isEmpty) {
-      throw Error();
+      throw Exception('Error fetching user profile');
     }
 
-    return Map<String, dynamic>.fromEntries(response.entries);
+    Map<String, dynamic> data = response;
+
+    if (data['adventure_completion'] != null &&
+        data['adventure_completion'] is! Map<String, dynamic>) {
+      if (data['adventure_completion'] is List) {
+        data['adventure_completion'] = {
+          'listData': data['adventure_completion']
+        };
+      } else {
+        throw Exception('Unexpected type for adventure_completion');
+      }
+    }
+    return data;
+  }
+
+  Future<String> getAdventureTitle(String adventureId) async {
+    final response = await SupabaseManager.client
+        .from('aventures')
+        .select('titre')
+        .eq('id', adventureId)
+        .single();
+
+    if (response.isEmpty) {
+      throw Exception('Error fetching adventure title');
+    }
+
+    return response['titre'].toString();
   }
 
   Widget _buildLoginFormAndSignUp() {
