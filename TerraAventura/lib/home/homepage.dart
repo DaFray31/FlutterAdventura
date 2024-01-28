@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:terraaventura/screens/homescreen.dart';
 import 'package:terraaventura/screens/monumentsScreen.dart';
 import 'package:terraaventura/screens/newsScreen.dart';
-import 'package:terraaventura/screens/profilescreen.dart';
+import 'package:terraaventura/screens/profileScreen.dart';
 
 import '../screens/settingsscreen.dart';
 
