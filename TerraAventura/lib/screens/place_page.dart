@@ -7,7 +7,8 @@ class PlacePage extends StatefulWidget {
   final dynamic monumentData;
   final dynamic adventure;
 
-  const PlacePage({Key? key, required this.monumentData, this.adventure}) : super(key: key);
+  const PlacePage({Key? key, required this.monumentData, this.adventure})
+      : super(key: key);
 
   @override
   PlacePageState createState() => PlacePageState(monumentData, adventure);
@@ -20,16 +21,20 @@ class PlacePageState extends State<PlacePage> {
   );
   bool isFavoritePressed = false;
   bool isFlagPressed = false;
-  List<Map<String, dynamic>> commentsData = []; // Updated to a list of map to store comments and ratings
+  List<Map<String, dynamic>> commentsData =
+      []; // Updated to a list of map to store comments and ratings
 
   dynamic data;
   dynamic adventureData;
+  dynamic adventureTitle;
+  dynamic adventureDescription;
 
   PlacePageState(dynamic monumentData, adventure) {
     data = monumentData;
     adventureData = adventure;
     print(data);
     fetchComments(); // Call the function to fetch comments
+    fetchAdventureData(); // Call the function to fetch adventure data
   }
 
   // Function to fetch comments from Supabase
@@ -40,7 +45,7 @@ class PlacePageState extends State<PlacePage> {
           .select('commentaires, note')
           .eq('aventure_id', adventureData['id']);
 
-      if (response == null) {
+      if (response.isEmpty) {
         print("Error when fetching data");
       } else {
         setState(() {
@@ -54,6 +59,25 @@ class PlacePageState extends State<PlacePage> {
     }
   }
 
+  Future<void> fetchAdventureData() async {
+    try {
+      final response = await supabase
+          .from('aventures')
+          .select('titre, description')
+          .eq('id', adventureData['id']);
+
+      if (response.isEmpty) {
+        print("Error when fetching data");
+      } else {
+        setState(() {
+          adventureTitle = response[0]['titre'];
+          adventureDescription = response[0]['description'];
+        });
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
+  }
 
   // Function to build star icons based on the given rating
   List<Icon> buildStarIcons(int rating) {
@@ -65,6 +89,7 @@ class PlacePageState extends State<PlacePage> {
     return stars;
   }
 
+  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,7 +121,8 @@ class PlacePageState extends State<PlacePage> {
                           IconButton(
                             icon: Icon(
                               Icons.favorite,
-                              color: isFavoritePressed ? Colors.red : Colors.grey,
+                              color:
+                                  isFavoritePressed ? Colors.red : Colors.grey,
                             ),
                             onPressed: () {
                               setState(() {
@@ -123,6 +149,18 @@ class PlacePageState extends State<PlacePage> {
               ),
             ),
             const SizedBox(height: 20),
+            Text(
+              '$adventureTitle',
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              '$adventureDescription',
+              style: const TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -131,14 +169,16 @@ class PlacePageState extends State<PlacePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AdventureLaunchScreen(adventureId: adventureData['id']),
+                        builder: (context) => AdventureLaunchScreen(
+                            adventureId: adventureData['id']),
                       ),
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 20.0),
                   ),
-                  child: const Text('Commencer le dialogue de chasse'),
+                  child: const Text('Démarrer l\'aventure'),
                 ),
               ],
             ),

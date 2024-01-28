@@ -25,18 +25,17 @@ class HomeScreen extends StatelessWidget {
                 },
               ),
               items: [
-                'images/back1.jpg',
-                'images/back1.jpg',
-                'images/back1.jpg',
+                'https://cdn.pixabay.com/photo/2024/01/18/17/37/stalk-8517287_1280.jpg',
+                'https://cdn.pixabay.com/photo/2015/07/05/10/18/tree-832079_1280.jpg',
               ].map((item) {
                 return Builder(
                   builder: (BuildContext context) {
                     return Container(
                       width: MediaQuery.of(context).size.width,
-                      margin: EdgeInsets.symmetric(horizontal: 5.0),
+                      margin: const EdgeInsets.symmetric(horizontal: 5.0),
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage(item),
+                          image: NetworkImage(item), // Use NetworkImage here
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -45,6 +44,7 @@ class HomeScreen extends StatelessWidget {
                 );
               }).toList(),
             ),
+
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -111,7 +111,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                       SizedBox(width: 10.0),
                       Text(
-                        'Pourquoi Terra Aventure ?',
+                        'Pourquoi Flutter Adventura ?',
                         style: TextStyle(
                           fontSize: 22.0,
                           fontWeight: FontWeight.bold,
@@ -121,7 +121,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 10.0),
                   Text(
-                    'Terra Aventure offre une expérience unique mêlant découverte, mystère et interaction avec un monde fantastique. Que vous soyez seul, en famille ou entre amis, préparez-vous à vivre des moments extraordinaires !',
+                    'Flutter Adventura offre une expérience unique mêlant découverte, mystère et interaction avec un monde fantastique. Que vous soyez seul, en famille ou entre amis, préparez-vous à vivre des moments extraordinaires !',
                     style: TextStyle(
                       fontSize: 16.0,
                       color: Colors.grey[600],
