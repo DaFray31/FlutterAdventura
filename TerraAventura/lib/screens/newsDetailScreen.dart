@@ -5,7 +5,7 @@ import '../functions/NewsItem.dart';
 class NewsDetailScreen extends StatelessWidget {
   final NewsItem newsItem;
 
-  NewsDetailScreen({required this.newsItem});
+  const NewsDetailScreen({super.key, required this.newsItem});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class NewsDetailScreen extends StatelessWidget {
             newsItem.imageUrl.isNotEmpty
                 ? Image.network(newsItem.imageUrl)
                 : Container(),
-            Text(newsItem.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
+            Text(newsItem.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
             Text(DateFormat('dd MMM yyyy').format(newsItem.pubDate)),
             Text(newsItem.description),
           ],

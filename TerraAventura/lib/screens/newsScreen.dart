@@ -6,7 +6,7 @@ import '../functions/RssService.dart';
 import 'newsDetailScreen.dart';
 
 class NewsScreen extends StatefulWidget {
-  NewsScreen({super.key});
+  const NewsScreen({super.key});
 
   @override
   _NewsScreenState createState() => _NewsScreenState();
@@ -18,9 +18,6 @@ class _NewsScreenState extends State<NewsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('News'),
-      ),
       body: FutureBuilder<List<NewsItem>>(
         future: rssService.fetchRss(),
         builder: (context, snapshot) {
@@ -31,7 +28,7 @@ class _NewsScreenState extends State<NewsScreen> {
               },
               child: ListView.separated(
                 itemCount: snapshot.data!.length,
-                separatorBuilder: (context, index) => Divider(),
+                separatorBuilder: (context, index) => const Divider(),
                 itemBuilder: (context, index) {
                   final item = snapshot.data![index];
                   return InkWell(
@@ -45,14 +42,14 @@ class _NewsScreenState extends State<NewsScreen> {
                     },
                     child: Card(
                       child: ListTile(
-                        leading: Container(
+                        leading: SizedBox(
                           width: 50.0, // specify the width of the leading widget
                           child: item.imageUrl.isNotEmpty
                               ? Image.network(item.imageUrl)
                               : Container(),
                         ),
                         title: Text(item.title,
-                            style: TextStyle(fontWeight: FontWeight.bold)),
+                            style: const TextStyle(fontWeight: FontWeight.bold)),
                         subtitle: Text(
                             DateFormat('dd MMM yyyy').format(item.pubDate)),
                       ),
@@ -64,7 +61,7 @@ class _NewsScreenState extends State<NewsScreen> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),
