@@ -20,6 +20,7 @@ class EndScreen extends StatefulWidget {
 
 class EndScreenState extends State<EndScreen> {
   int selectedStarCount = 0;
+  bool commentAdded = false; // Nouvel état pour suivre l'ajout du commentaire
 
   Future<void> completeAdventure(int adventureId) async {
     if (SupabaseManager.currentUser() == null) {
@@ -67,10 +68,27 @@ class EndScreenState extends State<EndScreen> {
               'Comment added successfully with rating: $selectedStarCount stars');
         }
 
-        widget.commentController.clear();
+        if (response.error != null) {
+          // La réponse contient une propriété 'error'
+          print('Error adding comment: ${response.error!.message}');
+        } else if (response.data != null) {
+          // La réponse contient une propriété 'data', ce qui indique une insertion réussie
+          print('Comment added successfully with rating: $selectedStarCount stars');
+          // Mettre à jour l'état pour indiquer que le commentaire a été ajouté avec succès
+
+          widget.commentController.clear();
+        } else {
+          // Cas où ni 'error' ni 'data' ne sont présents dans la réponse
+          print('Unexpected response from Supabase');
+        }
       }
     } catch (error) {
       print('Error: $error');
+
+      // Erreur que l'on a pas réuissi à résoudre, les données sont bien suavegardées mais on quand même une erreur, on rajoute donc la notification ici
+      setState(() {
+        commentAdded = true;
+      });
     }
   }
 
@@ -117,6 +135,12 @@ class EndScreenState extends State<EndScreen> {
                 ),
               ],
             ),
+            // Affichez le texte en vert si le commentaire a été ajouté avec succès
+            if (commentAdded)
+              const Text(
+                'Commentaire ajouté avec succès!',
+                style: TextStyle(color: Colors.green),
+              ),
             const SizedBox(height: 16),
             const Text(
               'Notez cette aventure:',

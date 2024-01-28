@@ -61,7 +61,7 @@ class HomeScreen extends StatelessWidget {
                       Text(
                         'Explorez le monde magique',
                         style: TextStyle(
-                          fontSize: 22.0,
+                          fontSize: 17.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -87,7 +87,7 @@ class HomeScreen extends StatelessWidget {
                       Text(
                         'Rencontrez des personnages fascinants',
                         style: TextStyle(
-                          fontSize: 22.0,
+                          fontSize: 17.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -113,7 +113,7 @@ class HomeScreen extends StatelessWidget {
                       Text(
                         'Pourquoi Flutter Adventura ?',
                         style: TextStyle(
-                          fontSize: 22.0,
+                          fontSize: 17.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

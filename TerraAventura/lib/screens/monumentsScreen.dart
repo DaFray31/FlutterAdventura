@@ -52,16 +52,71 @@ class _AdventuresTitle extends StatelessWidget {
   }
 }
 
-class _SearchBar extends StatelessWidget {
+class _SearchBar extends StatefulWidget {
   const _SearchBar({Key? key}) : super(key: key);
 
   @override
+  _SearchBarState createState() => _SearchBarState();
+}
+
+class _SearchBarState extends State<_SearchBar> {
+  final TextEditingController _searchController = TextEditingController();
+  List<dynamic> _searchResults = [];
+
+  @override
   Widget build(BuildContext context) {
-    return const TextField(
-      decoration: InputDecoration(
-        labelText: 'Search',
-        border: OutlineInputBorder(),
-      ),
+    return Column(
+      children: [
+        TextField(
+          controller: _searchController,
+          onChanged: (value) {
+            if (value.length > 2) {
+              //Requete suppabase
+              SupabaseService.supabase
+                  .from('monuments')
+                  .select()
+                  .ilike('nom', '%$value%')
+                  .then((response) {
+                setState(() {
+                  _searchResults = response;
+                  print(response);
+                });
+              });
+            } else {
+              setState(() {
+                _searchResults = [];
+              });
+            }
+          },
+          decoration: const InputDecoration(
+            labelText: 'Search',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        if (_searchResults.isNotEmpty)
+          Container(
+            height: 200,
+            child: ListView.builder(
+              itemCount: _searchResults.length,
+              itemBuilder: (context, index) {
+                final result = _searchResults[index];
+                return ListTile(
+                  title: Text(result['nom'].toString()),
+                  onTap: () {
+                    // Handle tap on search result, e.g., navigate to details screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            BeforeAdventureScreen(monumentData: result),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+      ],
     );
   }
 }
@@ -190,7 +245,7 @@ class _AdventuresListState extends State<_AdventuresList> {
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream:
-          SupabaseService.supabase.from('monuments').stream(primaryKey: ['id']),
+      SupabaseService.supabase.from('monuments').stream(primaryKey: ['id']),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');

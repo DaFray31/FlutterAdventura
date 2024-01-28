@@ -49,7 +49,7 @@ class PlacePageState extends State<PlacePage> {
       } else {
         setState(() {
           // Update the comments list with fetched data
-          commentsData = response;
+          commentsData = response.reversed.toList();
         });
       }
     } catch (error) {
