@@ -18,9 +18,6 @@ class _NewsScreenState extends State<NewsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('News'),
-      ),
       body: FutureBuilder<List<NewsItem>>(
         future: rssService.fetchRss(),
         builder: (context, snapshot) {

@@ -4,8 +4,10 @@ import 'package:terraaventura/screens/monumentsScreen.dart';
 import 'package:terraaventura/screens/newsScreen.dart';
 import 'package:terraaventura/screens/profilescreen.dart';
 
+import '../screens/settingsscreen.dart';
+
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -13,53 +15,88 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
-  String _currentTitle = 'Accueil'; // Variable pour le titre actuel
+  String _currentTitle = 'Accueil';
+  final PageController _pageController = PageController();
 
-  final List<Widget> _pages = [
-    const HomeScreen(),
-    const AdventuresScreen(),
-    const NewsScreen(),
-    const ProfileScreen(),
+  final List<Widget> _pages = const [
+    HomeScreen(),
+    AdventuresScreen(),
+    NewsScreen(),
+    ProfileScreen(),
   ];
 
-  // Met à jour le titre en fonction de la page actuelle
-  void _updateTitle() {
-    setState(() {
-      switch (_currentIndex) {
-        case 0:
-          _currentTitle = 'Accueil';
-          break;
-        case 1:
-          _currentTitle = 'Aventures';
-          break;
-        case 2:
-          _currentTitle = 'Actualités';
-          break;
-        case 3:
-          _currentTitle = 'Profil';
-          break;
+  @override
+  void initState() {
+    super.initState();
+    _pageController.addListener(() {
+      final int currentPage = _pageController.page!.round();
+      if (currentPage != _currentIndex) {
+        setState(() {
+          _currentIndex = currentPage;
+          _updateTitle();
+        });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _updateTitle() {
+    switch (_currentIndex) {
+      case 0:
+        _currentTitle = 'Accueil';
+        break;
+      case 1:
+        _currentTitle = 'Aventures';
+        break;
+      case 2:
+        _currentTitle = 'Actualités';
+        break;
+      case 3:
+        _currentTitle = 'Profil';
+        break;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-            child: Text(
-                _currentTitle)), // Utilisation de la variable pour le titre
+        leading: IconButton(
+          icon: Icon(Icons.settings),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SettingsScreen()),
+            );
+          },
+        ),
+        title: Center(child: Text(_currentTitle)),
       ),
-      body: _pages[_currentIndex],
+      body: PageView(
+        controller: _pageController,
+        children: _pages,
+        onPageChanged: (index) {
+          setState(() {
+            _currentIndex = index;
+            _updateTitle();
+          });
+        },
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.blue.withOpacity(0.5),
         onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-            _updateTitle(); // Met à jour le titre lors du changement de page
-          });
+          _pageController.animateToPage(
+            index,
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
+          );
         },
         items: const [
           BottomNavigationBarItem(
