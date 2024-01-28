@@ -108,7 +108,7 @@ class BeforeAdventureScreen extends StatelessWidget {
                       const SizedBox(height: 20),
                       // Display adventures
                       for (var adventure in adventures!)
-                        AdventureCard(adventure: adventure), // Replace AdventureCard with your own widget
+                        AdventureCard(adventure: adventure, monumentData: monumentData), // Replace AdventureCard with your own widget
                       const SizedBox(height: 20)
                     ],
                   ),

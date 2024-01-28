@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'adventureScreen.dart';
+
 class PlacePage extends StatefulWidget {
   final dynamic monumentData;
+  final dynamic adventure;
 
-  const PlacePage({Key? key, required this.monumentData}) : super(key: key);
+  const PlacePage({Key? key, required this.monumentData, this.adventure}) : super(key: key);
 
   @override
-  PlacePageState createState() => PlacePageState(monumentData);
+  PlacePageState createState() => PlacePageState(monumentData, adventure);
 }
 
 class PlacePageState extends State<PlacePage> {
@@ -17,171 +20,134 @@ class PlacePageState extends State<PlacePage> {
   );
   bool isFavoritePressed = false;
   bool isFlagPressed = false;
-  bool switchValue = false;
-  int points = 120;
-  List<String> comments = [
-    'Super endroit !',
-    'J\'adore ce lieu.',
-    'Magnifique vue !',
-    'C\'est vraiment cool ici.',
-    'Expérience incroyable !',
-  ];
-  int currentCommentIndex = 0;
-  TextEditingController commentController = TextEditingController();
-  List<String> carouselComments = [];
+  List<Map<String, dynamic>> commentsData = []; // Updated to a list of map to store comments and ratings
 
   dynamic data;
+  dynamic adventureData;
 
-  PlacePageState(dynamic monumentData) {
+  PlacePageState(dynamic monumentData, adventure) {
     data = monumentData;
+    adventureData = adventure;
+    print(data);
+    fetchComments(); // Call the function to fetch comments
   }
 
-  void nextComment() {
-    setState(() {
-      currentCommentIndex = (currentCommentIndex + 1) % comments.length;
-    });
-  }
+  // Function to fetch comments from Supabase
+  Future<void> fetchComments() async {
+    try {
+      final response = await supabase
+          .from('commentaires')
+          .select('commentaires, note')
+          .eq('aventure_id', adventureData['id']);
 
-  void checkStep(int stepNumber, String secretCode) {
-    // Implementation of checkStep
-  }
-
-  void addToCarousel() {
-    String newComment = commentController.text.trim();
-    if (newComment.isNotEmpty) {
-      setState(() {
-        comments.add(newComment);
-        commentController.clear();
-        //writeToSupabase(1, 3);
-      });
+      if (response == null) {
+        print("Error when fetching data");
+      } else {
+        setState(() {
+          print(response);
+          // Update the comments list with fetched data
+          commentsData = response;
+        });
+      }
+    } catch (error) {
+      print('Error: $error');
     }
+  }
+
+
+  // Function to build star icons based on the given rating
+  List<Icon> buildStarIcons(int rating) {
+    List<Icon> stars = [];
+    for (int i = 0; i < 5; i++) {
+      IconData iconData = i < rating ? Icons.star : Icons.star_border;
+      stars.add(Icon(iconData, color: Colors.amber));
+    }
+    return stars;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lieu m - Etape n'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              // Implement log-out logic here
-            },
-          ),
-        ],
-        backgroundColor: Colors.indigo,
+        title: Text(data['nom']),
+        backgroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
-              height: MediaQuery.of(context).size.height * 0.3,
-              decoration: const BoxDecoration(
+              height: MediaQuery.of(context).size.height * 0.4,
+              decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('images/back1.jpg'),
+                  image: NetworkImage(data['image']),
                   fit: BoxFit.cover,
                 ),
               ),
-              padding: const EdgeInsets.all(16.0),
-              child: Align(
-                alignment: Alignment.topRight,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.favorite,
-                        color: isFavoritePressed ? Colors.red : Colors.grey,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          isFavoritePressed = !isFavoritePressed;
-                        });
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.flag,
-                        color: isFlagPressed ? Colors.red : Colors.grey,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          isFlagPressed = !isFlagPressed;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              height: MediaQuery.of(context).size.height * 0.45,
-              decoration: BoxDecoration(
-                color: Colors.indigo, // Couleur de fond de la partie 2
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+              child: Stack(
                 children: [
-                  // ... (votre code existant)
-
-                  const SizedBox(height: 16.0),
-                  const Text(
-                    'Étape de la Chasse',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              Icons.favorite,
+                              color: isFavoritePressed ? Colors.red : Colors.grey,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                isFavoritePressed = !isFavoritePressed;
+                              });
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.flag,
+                              color: isFlagPressed ? Colors.red : Colors.grey,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                isFlagPressed = !isFlagPressed;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16.0),
-                  buildChaseStep('Étape 1', 'Trouvez l\'indice caché', 1,
-                      Icons.location_on, Colors.teal),
-                  buildChaseStep('Étape 2', 'Résolvez la devinette', 2,
-                      Icons.question_answer, Colors.orange),
-                  buildChaseStep('Étape 3', 'Prenez une photo', 3,
-                      Icons.camera_alt, Colors.purple),
-
-                  const SizedBox(height: 16.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Points:',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      Text(
-                        '$points',
-                        style: const TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
                   ),
                 ],
               ),
             ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AdventureLaunchScreen(adventureId: adventureData['id']),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  ),
+                  child: const Text('Commencer le dialogue de chasse'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
             Container(
-              height: MediaQuery.of(context).size.height * 0.3,
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: IconButton(
-                      icon: const Icon(Icons.share),
-                      onPressed: () {
-                        // Code share
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 16.0),
                   const Text(
                     'Commentaires',
                     style: TextStyle(
@@ -190,157 +156,49 @@ class PlacePageState extends State<PlacePage> {
                       color: Colors.black,
                     ),
                   ),
-                  const SizedBox(height: 16.0),
-                  GestureDetector(
-                    onTap: nextComment,
-                    child: Container(
-                      height: 50.0,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(10.0),
-                        color: Colors.grey[200],
-                      ),
-                      child: Text(
-                        comments[currentCommentIndex],
-                        style: const TextStyle(fontSize: 16.0),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16.0),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: commentController,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(50.0),
+                  SizedBox(
+                    height: 100.0,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: commentsData.map((commentData) {
+                        String comment = commentData['commentaires'].toString();
+                        int rating = commentData['note'] ?? 0;
+
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.7,
+                            padding: const EdgeInsets.all(16.0),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
-                            labelText: 'Ajouter un commentaire',
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: buildStarIcons(rating),
+                                ),
+                                //const SizedBox(height: 8),
+                                Text(
+                                  comment,
+                                  style: const TextStyle(fontSize: 16.0),
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(width: 10.0),
-                      IconButton(
-                        onPressed: addToCarousel,
-                        icon: const Icon(Icons.send),
-                        color: Colors.indigo,
-                      ),
-                    ],
-                  ),
+                        );
+                      }).toList(),
+                    ),
+                  )
                 ],
               ),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget buildChaseStep(String label, String objective, int stepNumber,
-      IconData icon, Color iconColor) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  icon,
-                  color: iconColor,
-                ),
-                const SizedBox(width: 8.0),
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-            IconButton(
-              icon: const Icon(
-                Icons.check,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                showCodeInputDialog(stepNumber);
-              },
-            ),
-          ],
-        ),
-        const SizedBox(height: 8.0),
-        Text(
-          'Objectif: $objective',
-          style: const TextStyle(color: Colors.white),
-        ),
-        const SizedBox(height: 16.0),
-      ],
-    );
-  }
-
-  /*void writeToSupabase(idUser, idMonument) async {
-    // Créez un tableau de données que vous souhaitez écrire dans la base de données
-    final List<Map<String, dynamic>> newData = [
-      {'id_monument': idMonument},
-      // Ajoutez d'autres données au besoin
-    ];
-
-    // Utilisez la méthode upsert pour écrire les données dans la table 'monuments'
-    final response =
-        await supabase.from('pers_commentaires').upsert(newData, onConflict: 'nom');
-
-    // Vérifiez la réponse pour voir si l'opération a réussi
-    if (response.error != null) {
-      print('Erreur ${response.error!.message}');
-    } else {
-      print('Données écrites avec succès !');
-    }
-  }*/
-
-  void showCodeInputDialog(int stepNumber) {
-    String secretCode = '';
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Vérification de l\'étape $stepNumber'),
-          content: Column(
-            children: [
-              const Text('Entrez le code secret trouvé sur l\'élément :'),
-              TextField(
-                onChanged: (value) {
-                  secretCode = value;
-                },
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Code Secret',
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Annuler'),
-            ),
-            TextButton(
-              onPressed: () {
-                checkStep(stepNumber, secretCode);
-                Navigator.of(context).pop();
-              },
-              child: const Text('Valider'),
-            ),
-          ],
-        );
-      },
     );
   }
 }
