@@ -22,9 +22,15 @@ class SupabaseManager {
   }
 
   static Future<User?> signIn(String email, String password) async {
-    final response =
-        await client.auth.signInWithPassword(email: email, password: password);
-    return response.user;
+    try{
+      final response =
+          await client.auth.signInWithPassword(email: email, password: password);
+      return response.user;
+    } catch (e) {
+      print('Error signing in: $e');
+      return null;
+    }
+
   }
 
   static Future<void> signOut() async {

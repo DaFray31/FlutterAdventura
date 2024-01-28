@@ -14,10 +14,10 @@ class SettingsScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Code source de l\'application :'),
+            const Text('Code source de l\'application :'),
             TextButton(
               onPressed: _launchURL,
-              child: Text(
+              child: const Text(
                 'https://github.com/DaFray31/FlutterAdventura',
                 style: TextStyle(color: Colors.blue),
               ),
