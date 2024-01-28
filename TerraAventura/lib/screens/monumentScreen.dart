@@ -50,7 +50,8 @@ class BeforeAdventureScreen extends StatelessWidget {
                   height: 450,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: NetworkImage(monumentData['image']), // Use NetworkImage to load image from URL
+                      image: NetworkImage(monumentData[
+                          'image']), // Use NetworkImage to load image from URL
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -92,7 +93,7 @@ class BeforeAdventureScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      Text(monumentData['commentaires'].toString()),
+                      Text(monumentData['description'].toString()),
                       const SizedBox(height: 10),
                       const Text(
                         'Conseils',
@@ -108,7 +109,10 @@ class BeforeAdventureScreen extends StatelessWidget {
                       const SizedBox(height: 20),
                       // Display adventures
                       for (var adventure in adventures!)
-                        AdventureCard(adventure: adventure), // Replace AdventureCard with your own widget
+                        AdventureCard(
+                            adventure: adventure,
+                            monumentData:
+                                monumentData), // Replace AdventureCard with your own widget
                       const SizedBox(height: 20)
                     ],
                   ),
