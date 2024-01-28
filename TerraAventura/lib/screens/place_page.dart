@@ -32,9 +32,8 @@ class PlacePageState extends State<PlacePage> {
   PlacePageState(dynamic monumentData, adventure) {
     data = monumentData;
     adventureData = adventure;
-    print(data);
-    fetchComments(); // Call the function to fetch comments
-    fetchAdventureData(); // Call the function to fetch adventure data
+    fetchComments();
+    fetchAdventureData();
   }
 
   // Function to fetch comments from Supabase
@@ -49,7 +48,6 @@ class PlacePageState extends State<PlacePage> {
         print("Error when fetching data");
       } else {
         setState(() {
-          print(response);
           // Update the comments list with fetched data
           commentsData = response;
         });

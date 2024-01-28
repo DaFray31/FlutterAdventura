@@ -43,9 +43,11 @@ class EndScreenState extends State<EndScreen> {
         .update(updates)
         .eq('id', userId);
 
-    if (response.error != null) {
+    if (response != null) {
       print('Error updating user profile: ${response.error!.message}');
     }
+
+
   }
 
   Future<void> addToComment() async {
